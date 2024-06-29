@@ -4,7 +4,20 @@ const { Event, Meet_Greet, Set_Time, Stage, Band } = db;
 const { Op } = require("sequelize");
 
 // FIND ALL EVENTS
-@@ -21,13 +21,51 @@ events.get("/", async (req, res) => {
+events.get("/", async (req, res) => {
+  try {
+    const allEvents = await Event.findAll({
+      order: [["date", "ASC"]],
+      where: {
+        name: {
+          [Op.like]: `%${req.query.name ? req.query.name : ""}%`,
+        },
+      },
+    });
+    res.status(200).json(allEvents);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // FIND SPECIFIC EVENT
@@ -60,6 +73,7 @@ events.get("/:name", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // CREATE AN EVENT
 events.post("/", async (req, res) => {
   try {
@@ -72,6 +86,7 @@ events.post("/", async (req, res) => {
     res.status(422).json({ error: error.message });
   }
 });
+
 // UPDATE AN EVENT
 events.put("/:id", async (req, res) => {
   try {
@@ -88,6 +103,7 @@ events.put("/:id", async (req, res) => {
     res.status(422).json({ error: error.message });
   }
 });
+
 // DELETE AN EVENT
 events.delete("/:id", async (req, res) => {
   try {
@@ -105,5 +121,6 @@ events.delete("/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // EXPORT
 module.exports = events;

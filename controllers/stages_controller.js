@@ -4,7 +4,20 @@ const { Stage, Event } = db;
 const { Op } = require("sequelize");
 
 // FIND ALL STAGES
-@@ -21,13 +21,25 @@ stages.get("/", async (req, res) => {
+stages.get("/", async (req, res) => {
+  try {
+    const allStages = await Stage.findAll({
+      order: [["name", "ASC"]],
+      where: {
+        name: {
+          [Op.like]: `%${req.query.name ? req.query.name : ""}%`,
+        },
+      },
+    });
+    res.status(200).json(allStages);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // FIND SPECIFIC STAGE
@@ -34,6 +47,7 @@ stages.get("/:name", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // CREATE A STAGE
 stages.post("/", async (req, res) => {
   try {
@@ -46,6 +60,7 @@ stages.post("/", async (req, res) => {
     res.status(422).json({ error: error.message });
   }
 });
+
 // UPDATE A STAGE
 stages.put("/:id", async (req, res) => {
   try {
@@ -62,6 +77,7 @@ stages.put("/:id", async (req, res) => {
     res.status(422).json({ error: error.message });
   }
 });
+
 // DELETE A STAGE
 stages.delete("/:id", async (req, res) => {
   try {
@@ -79,5 +95,6 @@ stages.delete("/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // EXPORT
 module.exports = stages;
